@@ -15,6 +15,8 @@ export default class GeoFuncPlugin extends Plugin {
 	settings: MyPluginSettings;
 
 	async onload() {
+
+		console.log("loaded");
 		await this.loadSettings();
 
 
@@ -35,8 +37,9 @@ export default class GeoFuncPlugin extends Plugin {
 		this.addCommand({
 			id: 'open-sample-modal-simple',
 			name: 'Open sample modal (simple)',
+			hotkeys: [{modifiers: ["Mod","Shift"], key: "p"}],
 			callback: () => {
-				new SampleModal(this.app).open();
+				new FunctionModal(this.app).open();
 			}
 		});
 		// This adds an editor command that can perform some operation on the current editor instance
@@ -59,7 +62,7 @@ export default class GeoFuncPlugin extends Plugin {
 					// If checking is true, we're simply "checking" if the command can be run.
 					// If checking is false, then we want to actually perform the operation.
 					if (!checking) {
-						new SampleModal(this.app).open();
+						new FunctionModal(this.app).open();
 					}
 
 					// This command will only show up in Command Palette when the check function returns true
@@ -82,7 +85,7 @@ export default class GeoFuncPlugin extends Plugin {
 	}
 
 	onunload() {
-
+		console.log("unloaded");
 	}
 
 	async loadSettings() {
@@ -94,14 +97,31 @@ export default class GeoFuncPlugin extends Plugin {
 	}
 }
 
-class SampleModal extends Modal {
+class FunctionModal extends Modal {
+	name: string;
+	is3d: boolean;
+
 	constructor(app: App) {
 		super(app);
 	}
 
 	onOpen() {
 		const {contentEl} = this;
-		contentEl.setText('Woah!');
+		contentEl.setText('Define your function!');
+
+		new Setting(contentEl)
+			.setName("3D")
+			.addToggle((field) =>
+			field.onChange((value) => {
+				this.is3d = value
+		}));
+
+		new Setting(contentEl)
+			.setName("Name")
+			.addText((text) =>
+			text.onChange((value) => {
+				this.name = value
+        }));
 	}
 
 	onClose() {
@@ -111,9 +131,9 @@ class SampleModal extends Modal {
 }
 
 class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: GeoFuncPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: GeoFuncPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
