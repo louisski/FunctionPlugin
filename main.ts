@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { Menu, App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 
 // Remember to rename these classes and interfaces!
@@ -22,12 +22,29 @@ export default class GeoFuncPlugin extends Plugin {
 
 
 		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('PLUPLUPLUPLUPLUGIN!');
-		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
+		this.addRibbonIcon("dice", "Open menu", (event) => {
+			const menu = new Menu();
+	  
+			menu.addItem((item) =>
+			  item
+				.setTitle("Copy")
+				.setIcon("documents")
+				.onClick(() => {
+				  new Notice("Copied");
+				})
+			);
+	  
+			menu.addItem((item) =>
+			  item
+				.setTitle("Paste")
+				.setIcon("paste")
+				.onClick(() => {
+				  new Notice("Pasted");
+				})
+			);
+	  
+			menu.showAtMouseEvent(event);
+		  });
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		const statusBarItemEl = this.addStatusBarItem();
